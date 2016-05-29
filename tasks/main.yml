@@ -19,6 +19,6 @@
   template: src=refresh.sh dest=/opt/droplan/ mode=0700
 
 - name: Scheduling Cron Job for Droplan Refresh
-  cron: name=droplan_refresh job="/opt/droplan/refresh.sh > /var/log/droplan.log 2>&1" minute=*/10
+  cron: name=droplan_refresh job="PATH=/sbin:/usr/bin:/bin /opt/droplan/refresh.sh > /var/log/droplan.log 2>&1" minute=*/10 user=root
   notify:
     - refresh droplan

@@ -1,0 +1,24 @@
+---
+
+- name: Install Droplan Prerequisites
+  apt: name={{ item }}
+  with_items:
+    - unzip
+    - iptables-persistent
+
+- name: Create Droplan Folder /opt/droplan
+  file: path=/opt/droplan state=directory
+
+- name: Download Droplan Package
+  get_url: url={{ droplan_package_url }} dest=/opt/droplan/droplan.zip force=yes
+
+- name: Unpack Droplan Package
+  unarchive: copy=no src=/opt/droplan/droplan.zip dest=/opt/droplan
+
+- name: Copy Droplan Scripts
+  template: src=refresh.sh dest=/opt/droplan/ mode=0700
+
+- name: Scheduling Cron Job for Droplan Refresh
+  cron: name=droplan_refresh job="/opt/droplan/refresh.sh > /var/log/droplan.log 2>&1" minute=*/10
+  notify:
+    - refresh droplan
